@@ -1,28 +1,32 @@
-import { useFecth } from './Hooks/useFetch';
+import { useEffect, useState } from 'react';
 
-type Repository = {
+type TRepository = {
   full_name: string;
   description: string;
-}
+};
 
 function App() {
-  const { data: repositories, isFetching } =
-    useFecth<Repository[]>('https://api.github.com/users/23eerick/repos')
+  const [repositories, setRepositories] = useState<TRepository[]>([]);
 
+  useEffect(() => {
+    fetch('https://api.github.com/users/23eerick/repos')
+      .then((response) => response.json())
+      .then((data) => {
+        setRepositories(data);
+      });
+  }, []);
   return (
     <ul>
-      {isFetching && <p>Carregando...</p>}
-      {repositories?.map(repo => {
+      {repositories.map((repo) => {
         return (
           <li key={repo.full_name}>
-            <h1>{repo.full_name}</h1>
+            <strong>{repo.full_name}</strong>
             <p>{repo.description}</p>
           </li>
-        )
+        );
       })}
     </ul>
-  )
+  );
 }
-
 
 export default App;
